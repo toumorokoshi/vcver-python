@@ -20,7 +20,7 @@ Version String Formats
 
 The default version string for vcver is of the form::
 
-      {tag_version}.{commitcount}+{scm_change_id}
+      {tag_version}.{commit_count}+{scm_change_id}
 
 Where:
 
@@ -38,7 +38,7 @@ due to the plus in the version string.
 If you need backwards compatibility and you would still like vc versioning, the
 following format is recommended:
 
-      {tag_version}.{commitcount}.{scm_change_id}
+      {tag_version}.{commit_count}.{scm_change_id}
 
 --------------------------------------
 Compatibility with Semantic Versioning
