@@ -12,8 +12,8 @@ def test(build):
     build.packages.install("pytest-cov")
     pytest = os.path.join(build.root, "bin", "py.test")
     subprocess.call([
-        pytest, "--cov", "deepmerge",
-        "deepmerge/tests",
+        pytest, "--cov", "vcver",
+        "vcver/tests",
         "--cov-report", "term-missing"
     ] + build.options.args)
 

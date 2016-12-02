@@ -14,6 +14,10 @@ class SCM(object):
     def __init__(self, path):
         self._path = path
 
+    @classmethod
+    def get_name(cls):
+        return str(cls.__name__.lower())
+
     @staticmethod
     def is_repo(path):
         """

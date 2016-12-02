@@ -13,7 +13,7 @@ def main(*args, **kwargs):
 
 
 def get_version(path=os.curdir,
-                version_format="{tag_version}.{commitcount}+{scm_change_id}",
+                version_format="{tag_version}.{commit_count}+{scm_change_id}",
                 version_file="generated_version.txt",
                 scm_type=None):
     """
@@ -37,7 +37,15 @@ def get_version(path=os.curdir,
         raise VersionerError(msg)
 
     props = scm.get_properties()
-    version = version_format.format(**props)
+
+    try:
+        version = version_format.format(**props)
+    except KeyError as ke:
+        raise VersionerError(
+            "key {0} was not provided by the scm type {1}".format(
+                ke, scm.get_name())
+        )
+
     _write_version_file(version_file_path, version)
     return version
 
@@ -51,8 +59,8 @@ def _read_version_file(version_file):
 
 def _get_scm(scm_type, path):
     for SCMType in SCM_TYPES:
-        if scm_type is None or scm_type == SCMType.__name__.lower():
-            if scm_type.is_repo(path):
+        if scm_type is None or scm_type == SCMType.get_name():
+            if SCMType.is_repo(path):
                 return SCMType(path)
     return None
 

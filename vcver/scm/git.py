@@ -28,7 +28,7 @@ class Git(SCM):
         }
 
     def _num_commits_since(self, tag):
-        cmd = CMD_REV_COUNT.format(tag, "HEAD")
+        cmd = CMD_REV_COUNT.format(start=tag, end="HEAD")
         return self._cmd(cmd)
 
     def get_latest_version_tag(self):
@@ -54,12 +54,14 @@ class Git(SCM):
             cmd, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             shell=True,
-            pwd=self._path
+            cwd=self._path
         )
         stdout, stderr = proc.communicate()
+        LOG.debug("stdout of cmd: " + stdout)
+        LOG.debug("stderr of cmd: " + stderr)
 
         if proc.returncode == 0:
-            return stdout.decode("utf-8")
+            return stdout.decode("utf-8").strip()
         raise VersionerError(
             "'{0}' returned an error code {1}".format(
                 cmd, proc.returncode
