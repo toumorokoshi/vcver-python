@@ -5,6 +5,8 @@ from .exception import VersionerError
 
 SCM_TYPES = [Git]
 LOG = logging.getLogger(__name__)
+MAIN_BRANCH_FORMAT = "{tag_version}.{commit_count}+{scm_change_id}",
+DEV_BRANCH_FORMAT = "{tag_version}b{commit_count}+{branch}.{scm_change_id}",
 
 
 def main(*args, **kwargs):
@@ -13,7 +15,7 @@ def main(*args, **kwargs):
 
 
 def get_version(path=os.curdir,
-                version_format="{tag_version}.{commit_count}+{scm_change_id}",
+                version_format=None,
                 version_file="generated_version.txt",
                 scm_type=None):
     """
@@ -37,6 +39,7 @@ def get_version(path=os.curdir,
         raise VersionerError(msg)
 
     props = scm.get_properties()
+    version_format = _get_version_format(scm, version_format)
 
     try:
         version = version_format.format(**props)
@@ -68,3 +71,13 @@ def _get_scm(scm_type, path):
 def _write_version_file(version_file, version):
     with open(version_file, "w+") as fh:
         fh.write(version)
+
+
+def _get_version_format(scm, version_format):
+    if version_format:
+        return version_format
+
+    if scm.is_main_branch():
+        return MAIN_BRANCH_FORMAT
+
+    return DEV_BRANCH_FORMAT

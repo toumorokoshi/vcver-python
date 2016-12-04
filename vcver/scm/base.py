@@ -8,11 +8,18 @@ class SCM(object):
     REQUIRED_PARAMS = [
         "tag_version",
         "commitcount",
-        "scm_change_id"
+        "scm_change_id",
+        "branch"
     ]
 
     def __init__(self, path):
         self._path = path
+
+    @classmethod
+    def is_main_branch(cls):
+        raise NotImplementedError(
+            "method is_main_branch is not implemented for {0}".format(cls)
+        )
 
     @classmethod
     def get_name(cls):
@@ -39,3 +46,6 @@ def extract_tag_version(tag):
     extract a version string from a tag, or None if
     it is not a valid numerical version.
     """
+    if tag.startswith("v"):
+        return tag[1:]
+    return None

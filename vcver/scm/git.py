@@ -4,10 +4,11 @@ import subprocess
 from .base import SCM, extract_tag_version, DEFAULT_TAG_VERSION
 from ..exception import VersionerError
 
-CMD_SHORT_HASH = "git rev-parse --short HEAD"
-CMD_REV_COUNT = "git rev-list {start}..{end} --count"
+CMD_BRANCH = "git rev-parse --abbrev-ref HEAD"
 CMD_FIRST_COMMIT = "git rev-list HEAD | tail -n 1"
 CMD_LIST_TAGS = "git tag --list"
+CMD_REV_COUNT = "git rev-list {start}..{end} --count"
+CMD_SHORT_HASH = "git rev-parse --short HEAD"
 
 LOG = logging.getLogger(__name__)
 
@@ -24,8 +25,19 @@ class Git(SCM):
         return {
             "scm_change_id": self._cmd(CMD_SHORT_HASH),
             "commit_count": self._num_commits_since(tag),
-            "tag_version": tag_version
+            "tag_version": tag_version,
+            "branch": self._branch()
         }
+
+    def is_main_branch(self):
+        return self._branch() == "master"
+
+    def _branch(self):
+        branch = self._cmd(CMD_BRANCH)
+        if branch == self._cmd(CMD_SHORT_HASH):
+            # you may not be on a branch
+            return None
+        return branch
 
     def _num_commits_since(self, tag):
         cmd = CMD_REV_COUNT.format(start=tag, end="HEAD")
