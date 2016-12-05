@@ -15,11 +15,11 @@ develop versions, of the form:
 
 .. code-block::
 
-    {tag_version}.dev{commit_count}+{branch}.{scm_change_id}
+    {main_version}.dev{commit_count}+{branch}.{scm_change_id}
 
 With development branches, it is desired to not override versions published from
 a blessed subset of "released" branches. As such, if the current branch is not a release
-branch, a version of 0 is used instead of the tag_version:
+branch, a version of 0 is used instead of the main_version:
 
 .. code-block::
 
@@ -29,12 +29,13 @@ and a release version, of the form:
 
 .. code-block::
 
-    {tag_version}
+    {main_version}
 
 Each part is described as follows:
 
-* tag_version is retrieved from the last tagged commit with a leading v (e.g. v1.0)
-* commit_count is the number of commits from tag_version
+* main_version is retrieved from the last tagged commit with a leading v (e.g. v1.0),
+  but is converted to a 0 if the branch is not a release branch.
+* commit_count is the number of commits from main_version
 * branch is the branch that the repository was built against, removing
   characters that are incompatible with PEP440 (anything that is not alphanumeric or a dot)
 * scm_change_id is a unique id in the form of version control, used to identify
@@ -111,7 +112,7 @@ Then, follow this pattern in your setup.py:
             # OPTIONAL ARGS
 
             # version_format overrides the standard version format
-            version_format="{tag_version}.{commit_count}",
+            version_format="{main_version}.{commit_count}",
 
             # release_version_format overrides the release version format
             release_version_format="{commit_count}",
@@ -163,11 +164,11 @@ Why zero out versions from non-release branches?
 ================================================
 
 Sometimes, a non-release version can be published accidentally, or it may be desired to publish
-development versions side by side by versions published by release branches. In this situations, 
-ensuring that the release versions always take precedence over non-release version is valuable, to ensure 
+development versions side by side by versions published by release branches. In this situations,
+ensuring that the release versions always take precedence over non-release version is valuable, to ensure
 that development versions are not accidentally picked up by those expecting stable releases.
 
-If this behavior is not desired, custom version strings can be specified with "tag_version" instead of "main_version". "tag_version" is preserved regardless of the branch used.
+If this behavior is not desired, custom version strings can be specified with "main_version" instead of "main_version". "main_version" is preserved regardless of the branch used.
 
 How to make sure others can consume your package
 ================================================
@@ -188,6 +189,19 @@ VERSION file by creating/modifying the
    include VERSION
 
 
+Customizable Version Strings
+============================
+
+Both the version format and release format is configurable, with the
+arguments version_format and release_version_format, respectively.
+
+In addition to the values above, the following values are provided:
+
+* tag_version: the raw version of main_version, which does not zero
+  out for non-release branches.
+
+
+
 Pre-PEP440 Version
 ==================
 
@@ -197,14 +211,14 @@ due to the plus in the version string.
 If you need backwards compatibility and you would still like vc versioning, the
 following format is recommended:
 
-      {tag_version}.dev{commit_count}.{branch}.{scm_change_id}
+      {main_version}.dev{commit_count}.{branch}.{scm_change_id}
 
  This can be changed by an argument into vcver:
 
 .. code-block:: python
 
     # in the setup call of setup.py
-    vcver={"version_format": "{tag_version}.dev{commit_count}.{branch}.{scm_change_id}"}
+    vcver={"version_format": "{main_version}.dev{commit_count}.{branch}.{scm_change_id}"}
 
 Compatibility with Semantic Versioning
 ======================================

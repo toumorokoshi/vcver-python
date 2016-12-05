@@ -7,8 +7,8 @@ from .exception import VersionerError
 
 SCM_TYPES = [Git]
 LOG = logging.getLogger(__name__)
-RELEASE_FORMAT = "{tag_version}"
-FORMAT = "{tag_version}.dev{commit_count}+{branch}.{scm_change_id}"
+RELEASE_FORMAT = "{main_version}"
+FORMAT = "{main_version}.dev{commit_count}+{branch}.{scm_change_id}"
 
 
 def get_version(path=os.curdir,
@@ -45,7 +45,9 @@ def get_version(path=os.curdir,
         LOG.info("branch {0} does not match regex {1}. Using default tag version.".format(
             props["branch"], release_branch_regex
         ))
-        props["tag_version"] = DEFAULT_TAG_VERSION
+        props["main_version"] = DEFAULT_TAG_VERSION
+    else:
+        props["main_version"] = props["tag_version"]
 
     fmt_to_use = release_version_format if is_release else version_format
 
