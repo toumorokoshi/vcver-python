@@ -9,12 +9,15 @@ def test_happy_case():
     expected format.
     """
     v = vcver.get_version()
-    version, scm_id = v.split("+")
-    version_parts = version.split(".")
+    version, scm = v.split("+")
+    major, minor, patch, dev = version.split(".")
+    branch, change_id = scm.split(".")
     # scm_change_id should be a git hash.
-    assert set(scm_id) & set("abcdef1234567890") == set(scm_id)
+    assert set(change_id) & set("abcdef1234567890") == set(change_id)
     # major / minor should be an int
-    int(version_parts[0])
-    int(version_parts[1])
+    int(major)
+    int(minor)
+    int(patch)
+    assert dev.startswith("dev")
     # commitcount should be an int
-    int(version_parts[2])
+    int(dev[3:])

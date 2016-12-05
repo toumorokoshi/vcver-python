@@ -4,7 +4,7 @@ import subprocess
 from .base import SCM, extract_tag_version, DEFAULT_TAG_VERSION
 from ..exception import VersionerError
 
-CMD_LATEST_VERSION_TAG = "git describe --tags --match v* --abbrev=0"
+CMD_LATEST_VERSION_TAG = "git describe --tags --match 'v*' --abbrev=0"
 CMD_BRANCH = "git rev-parse --abbrev-ref HEAD"
 CMD_FIRST_COMMIT = "git rev-list HEAD | tail -n 1"
 CMD_LIST_TAGS = "git tag --list"
@@ -33,9 +33,6 @@ class Git(SCM):
             "tag_version": tag_version,
             "branch": self._branch()
         }
-
-    def is_main_branch(self):
-        return self._branch() == "master"
 
     def _branch(self):
         branch = self._cmd(CMD_BRANCH)

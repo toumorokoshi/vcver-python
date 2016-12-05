@@ -2,7 +2,7 @@ import pytest
 from vcver.scm.base import extract_tag_version
 
 
-@pytest.parametrize("inp, out", [
+@pytest.mark.parametrize("inp, out", [
     ("v0.1", "0.1"),
     ("oogabooga", None),
 ])

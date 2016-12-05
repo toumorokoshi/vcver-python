@@ -16,12 +16,6 @@ class SCM(object):
         self._path = path
 
     @classmethod
-    def is_main_branch(cls):
-        raise NotImplementedError(
-            "method is_main_branch is not implemented for {0}".format(cls)
-        )
-
-    @classmethod
     def get_name(cls):
         return str(cls.__name__.lower())
 
