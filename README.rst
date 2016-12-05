@@ -21,6 +21,8 @@ With development branches, it is desired to not override versions published from
 a blessed subset of "released" branches. As such, if the current branch is not a release
 branch, a version of 0 is used instead of the tag_version:
 
+.. code-block::
+
     0.dev{commit_count}+{branch}.{scm_change_id}
 
 and a release version, of the form:
@@ -32,7 +34,7 @@ and a release version, of the form:
 Each part is described as follows:
 
 * tag_version is retrieved from the last tagged commit with a leading v (e.g. v1.0)
-* commitcount is the number of commits from tag_version
+* commit_count is the number of commits from tag_version
 * branch is the branch that the repository was built against, removing
   characters that are incompatible with PEP440 (anything that is not alphanumeric or a dot)
 * scm_change_id is a unique id in the form of version control, used to identify
@@ -57,8 +59,8 @@ And a release version:
 
    1.1
 
-These are version strin styles that are compatible with
-`PEP440`<https://www.python.org/dev/peps/pep-0440/>.
+These are compatible with
+`PEP440 <https://www.python.org/dev/peps/pep-0440/>`_.
 
 
 -------
@@ -132,6 +134,8 @@ Now your package will publish with a VC-based version!
 
 If you followed the full example, you can specify the release version by adding --release:
 
+.. code-block::
+
     python setup.py upload --release
 
 -------------------
@@ -149,22 +153,21 @@ The dev and release versions have different goals:
 
 For most consumers, the number of commits since the last release, the
 branch it was released against, or the build commit itself are
-irrelevant.  The consumer wants to know how much this version changed,
+irrelevant.  The consumer wants to know about the size of the change or type of changes,
 and that can be done by the major / minor / patch versions specified
-in the git tag. Adding this information proves to be confusing with
+in the git tag, or the changelog. Adding version control information proves to be confusing with
 that regard, providing multiple numbers that are not relevant to figuring out
 the amount of change.
 
-Version String Elements
-=======================
+Why zero out versions from non-release branches?
+================================================
 
-The default version string for vcver is of the form::
+Sometimes, a non-release version can be published accidentally, or it may be desired to publish
+development versions side by side by versions published by release branches. In this situations, 
+ensuring that the release versions always take precedence over non-release version is valuable, to ensure 
+that development versions are not accidentally picked up by those expecting stable releases.
 
-    {tag_version}.dev{commit_count}+{branch}.{scm_change_id}
-
-Where:
-
-
+If this behavior is not desired, custom version strings can be specified with "tag_version" instead of "main_version". "tag_version" is preserved regardless of the branch used.
 
 How to make sure others can consume your package
 ================================================
@@ -178,7 +181,7 @@ directory, which is typically the same directory as where the setup.py lives
 vcver will attempt to find a VERSION file if the working directory is
 not a version control repository. Make sure your package includes a
 VERSION file by creating/modifying the
-`MANIFEST.in`<https://docs.python.org/2/distutils/sourcedist.html#the-manifest-in-template>:
+`MANIFEST.in <https://docs.python.org/2/distutils/sourcedist.html#the-manifest-in-template>`_:
 
 .. code-block::
 
@@ -206,7 +209,7 @@ following format is recommended:
 Compatibility with Semantic Versioning
 ======================================
 
-`Semantic versioning`<http://semver.org/> is a standard to provided a
+`Semantic versioning <http://semver.org/>`_ is a standard to provided a
 meaning to the major, minor, and patch versions of a version
 string. Compatibility with semver is possible if new major / minor
 versions are tagged according the semver spec.
@@ -215,6 +218,6 @@ versions are tagged according the semver spec.
 Special Thanks
 --------------
 
-- `Zillow`<http://www.zillow.com/jobs/>, where this approach of SCM-based versioning started
-- `Taylor McKay`<https://github.com/tmckay>  who implemented the original Python version at Zillow
-- `Mohammad Sarhan`<https://github.com/sarhanm>, who designed and implemented the original Java version at Zillow, and has a public `gradle variant`<https://github.com/sarhanm/gradle-versioner>
+- `Zillow <http://www.zillow.com/jobs/>`_, where this approach of SCM-based versioning started
+- `Taylor McKay <https://github.com/tmckay>`_,  who implemented the original Python version at Zillow
+- `Mohammad Sarhan <https://github.com/sarhanm>`_, who designed and implemented the original Java version at Zillow, and has a public `gradle variant <https://github.com/sarhanm/gradle-versioner>`_
