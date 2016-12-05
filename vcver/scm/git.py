@@ -20,6 +20,8 @@ class GitCommandError(VersionerError):
 
 class Git(SCM):
 
+    RELEASE_BRANCH_REGEX = "master"
+
     @staticmethod
     def is_repo(path):
         dot_git_path = os.path.join(path, ".git")

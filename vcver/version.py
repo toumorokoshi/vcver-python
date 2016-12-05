@@ -1,6 +1,8 @@
 import os
+import re
 import logging
 from .scm.git import Git
+from .scm.base import DEFAULT_TAG_VERSION
 from .exception import VersionerError
 
 SCM_TYPES = [Git]
@@ -14,6 +16,7 @@ def get_version(path=os.curdir,
                 version_format=FORMAT,
                 release_version_format=RELEASE_FORMAT,
                 version_file="VERSION",
+                release_branch_regex=None,
                 scm_type=None):
     """
     return the version.
@@ -36,6 +39,13 @@ def get_version(path=os.curdir,
         raise VersionerError(msg)
 
     props = scm.get_properties()
+
+    release_branch_regex = release_branch_regex or scm.RELEASE_BRANCH_REGEX
+    if not re.match(release_branch_regex, props["branch"]):
+        LOG.info("branch {0} does not match regex {1}. Using default tag version.".format(
+            props["branch"], release_branch_regex
+        ))
+        props["tag_version"] = DEFAULT_TAG_VERSION
 
     fmt_to_use = release_version_format if is_release else version_format
 

@@ -17,6 +17,12 @@ develop versions, of the form:
 
     {tag_version}.dev{commit_count}+{branch}.{scm_change_id}
 
+With development branches, it is desired to not override versions published from
+a blessed subset of "released" branches. As such, if the current branch is not a release
+branch, a version of 0 is used instead of the tag_version:
+
+    0.dev{commit_count}+{branch}.{scm_change_id}
+
 and a release version, of the form:
 
 .. code-block::
@@ -39,13 +45,19 @@ v1.1, the dev version would look something like:
 
    1.1.dev10+master.abc123
 
+On a develop branch:
+
+.. code-block::
+
+   0.dev13+develop.def456
+
 And a release version:
 
 .. code-block::
 
    1.1
 
-These are version string styles that are compatible with
+These are version strin styles that are compatible with
 `PEP440`<https://www.python.org/dev/peps/pep-0440/>.
 
 
@@ -93,7 +105,25 @@ Then, follow this pattern in your setup.py:
         # version if "is_release" is True.
         vcver={
             "is_release": is_release,
-            "path": base
+            "path": base,
+            # OPTIONAL ARGS
+
+            # version_format overrides the standard version format
+            version_format="{tag_version}.{commit_count}",
+
+            # release_version_format overrides the release version format
+            release_version_format="{commit_count}",
+
+            # scm_type: if you do not want autodetection of the SCM, you can
+            # specify it.
+            scm_type="git",
+
+            # release_branch_regex: override the default release branch
+            # (default release branch depends on the SCM used.)
+            release_branch_regex="(master|hotfix|release)",
+
+            # version_file: override the name of the version file.
+            version_file="GENERATED_VERSION"
         },
         ...
     )

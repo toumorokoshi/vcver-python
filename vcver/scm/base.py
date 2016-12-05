@@ -1,10 +1,12 @@
-DEFAULT_TAG_VERSION = "0.0"
+DEFAULT_TAG_VERSION = "0"
 
 
 class SCM(object):
     """
     SCMs are wrappers around a particular form of version control.
     """
+    RELEASE_BRANCH_REGEX = None
+
     REQUIRED_PARAMS = [
         "tag_version",
         "commitcount",
