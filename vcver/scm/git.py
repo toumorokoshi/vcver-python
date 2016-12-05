@@ -4,6 +4,7 @@ import subprocess
 from .base import SCM, extract_tag_version, DEFAULT_TAG_VERSION
 from ..exception import VersionerError
 
+CMD_LATEST_VERSION_TAG = "git describe --tags --match v* --abbrev=0"
 CMD_BRANCH = "git rev-parse --abbrev-ref HEAD"
 CMD_FIRST_COMMIT = "git rev-list HEAD | tail -n 1"
 CMD_LIST_TAGS = "git tag --list"
@@ -11,6 +12,10 @@ CMD_REV_COUNT = "git rev-list {start}..{end} --count"
 CMD_SHORT_HASH = "git rev-parse --short HEAD"
 
 LOG = logging.getLogger(__name__)
+
+
+class GitCommandError(VersionerError):
+    pass
 
 
 class Git(SCM):
@@ -44,16 +49,15 @@ class Git(SCM):
         return self._cmd(cmd)
 
     def get_latest_version_tag(self):
-        tags = self._cmd(CMD_LIST_TAGS).strip().split("\n")
-        for t in tags:
-            if t == "":
-                continue
-            extracted_version = extract_tag_version(t)
-            if extracted_version:
-                return (t, extracted_version)
-        LOG.info("unable to find a valid version tag. using the default.")
-        first_commit = self._cmd(CMD_FIRST_COMMIT)
-        return (first_commit, DEFAULT_TAG_VERSION)
+        try:
+            tag = self._cmd(CMD_LATEST_VERSION_TAG)
+            commit = tag
+        except GitCommandError:
+            LOG.info("unable to find a valid version tag. using the default.")
+            tag = "v" + DEFAULT_TAG_VERSION
+            commit = self._cmd(CMD_FIRST_COMMIT)
+        extracted_version = extract_tag_version(tag)
+        return (commit, extracted_version)
 
     def _cmd(self, cmd):
         """
@@ -74,7 +78,7 @@ class Git(SCM):
 
         if proc.returncode == 0:
             return stdout.decode("utf-8").strip()
-        raise VersionerError(
+        raise GitCommandError(
             "'{0}' returned an error code {1}".format(
                 cmd, proc.returncode
             )

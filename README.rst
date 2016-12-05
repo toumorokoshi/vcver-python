@@ -48,6 +48,22 @@ Semantic versioning is a standard to provided a meaning to the major, minor, and
 versions of a version string. Compatibility with semver is possible if
 new major / minor versions are tagged according the semver spec.
 
+--------------------------
+Canonical setup.py example
+--------------------------
+
+.. code-block:: python
+
+    import sys
+
+    def extract_is_release_from_argv():
+        if "--vcver-release" in sys.argv:
+            sys.argv.remove("--vcver-release")
+            return True
+        return False
+
+
+
 --------------
 Special Thanks
 --------------

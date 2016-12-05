@@ -12,7 +12,7 @@ install_requires = [
 tests_require = []
 
 setup(name='vcver',
-      version='0.0.1',
+      version='0.0.2',
       description='a tool to provide versions wit scm data.',
       long_description=open(README_PATH).read(),
       author='Yusuke Tsutsumi',
