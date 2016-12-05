@@ -2,25 +2,34 @@ import os
 import logging
 from .scm.git import Git
 from .exception import VersionerError
+from .dist import extract_release_argv
 
 SCM_TYPES = [Git]
 LOG = logging.getLogger(__name__)
-MAIN_BRANCH_FORMAT = "{tag_version}.{commit_count}+{scm_change_id}",
-DEV_BRANCH_FORMAT = "{tag_version}b{commit_count}+{branch}.{scm_change_id}",
+RELEASE_FORMAT = "{tag_version}"
+FORMAT = "{tag_version}.dev{commit_count}+{branch}.{scm_change_id}"
 
 
-def main(*args, **kwargs):
+def setup_keywords_entry_point(dist, attr, value):
     logging.basicConfig()
-    return get_version(*args, **kwargs)
+    version = get_version(value)
+    dist.metadata.version = version
 
 
 def get_version(path=os.curdir,
-                version_format=None,
-                version_file="generated_version.txt",
+                extract_release_arg=False,
+                branch_config=None,
+                version_format=FORMAT,
+                release_version_format=RELEASE_FORMAT,
+                version_file="VERSION",
                 scm_type=None):
     """
     return the version.
     """
+    is_release = False
+    if extract_release_arg:
+        is_release = extract_release_argv()
+
     path = os.path.abspath(path)
     version_file_path = os.path.join(path, version_file)
 
@@ -39,10 +48,11 @@ def get_version(path=os.curdir,
         raise VersionerError(msg)
 
     props = scm.get_properties()
-    version_format = _get_version_format(scm, version_format)
+
+    fmt_to_use = release_version_format if is_release else version_format
 
     try:
-        version = version_format.format(**props)
+        version = fmt_to_use.format(**props)
     except KeyError as ke:
         raise VersionerError(
             "key {0} was not provided by the scm type {1}".format(
@@ -71,13 +81,3 @@ def _get_scm(scm_type, path):
 def _write_version_file(version_file, version):
     with open(version_file, "w+") as fh:
         fh.write(version)
-
-
-def _get_version_format(scm, version_format):
-    if version_format:
-        return version_format
-
-    if scm.is_main_branch():
-        return MAIN_BRANCH_FORMAT
-
-    return DEV_BRANCH_FORMAT

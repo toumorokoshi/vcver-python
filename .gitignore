@@ -89,5 +89,5 @@ ENV/
 .ropeproject
 .uranium
 bin
-generated_version.txt
+VERSION
 include

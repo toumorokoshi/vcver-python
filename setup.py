@@ -12,7 +12,7 @@ install_requires = [
 tests_require = []
 
 setup(name='vcver',
-      version='0.0.1b',
+      version='0.0.1',
       description='a tool to provide versions wit scm data.',
       long_description=open(README_PATH).read(),
       author='Yusuke Tsutsumi',
@@ -32,5 +32,10 @@ setup(name='vcver',
           'Programming Language :: Python :: 3',
           'Programming Language :: Python :: 3.5',
       ],
-      tests_require=tests_require
+      tests_require=tests_require,
+      entry_points={
+          'distutils.setup_keywords': [
+              'vcver=vcver:setup_keywords_entry_point'
+          ],
+      },
 )
