@@ -72,11 +72,13 @@ class Git(SCM):
             cwd=self._path
         )
         stdout, stderr = proc.communicate()
+        stdout = stdout.decode("utf-8").strip()
+        stderr = stderr.decode("utf-8").strip()
         LOG.debug("stdout of cmd: " + stdout)
         LOG.debug("stderr of cmd: " + stderr)
 
         if proc.returncode == 0:
-            return stdout.decode("utf-8").strip()
+            return stdout
         raise GitCommandError(
             "'{0}' returned an error code {1}".format(
                 cmd, proc.returncode
