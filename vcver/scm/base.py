@@ -9,7 +9,7 @@ class SCM(object):
 
     REQUIRED_PARAMS = [
         "tag_version",
-        "commitcount",
+        "commit_count",
         "scm_change_id",
         "branch"
     ]

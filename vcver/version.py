@@ -4,6 +4,7 @@ import logging
 from .scm.git import Git
 from .scm.base import DEFAULT_TAG_VERSION
 from .exception import VersionerError
+from .version_string import make_string_pep440_compatible
 
 SCM_TYPES = [Git]
 LOG = logging.getLogger(__name__)
@@ -38,6 +39,22 @@ def get_version(path=os.curdir,
             )
         raise VersionerError(msg)
 
+    version = determine_version(
+        scm,
+        version_format=version_format,
+        release_version_format=release_version_format,
+        is_release=is_release
+    )
+
+    _write_version_file(version_file_path, version)
+    return version
+
+
+def determine_version(scm,
+                      version_format=FORMAT,
+                      release_version_format=RELEASE_FORMAT,
+                      release_branch_regex=None,
+                      is_release=False):
     props = scm.get_properties()
 
     release_branch_regex = release_branch_regex or scm.RELEASE_BRANCH_REGEX
@@ -49,18 +66,17 @@ def get_version(path=os.curdir,
     else:
         props["main_version"] = props["tag_version"]
 
+    props["branch"] = make_string_pep440_compatible(props["branch"])
+
     fmt_to_use = release_version_format if is_release else version_format
 
     try:
-        version = fmt_to_use.format(**props)
+        return fmt_to_use.format(**props)
     except KeyError as ke:
         raise VersionerError(
             "key {0} was not provided by the scm type {1}".format(
                 ke, scm.get_name())
         )
-
-    _write_version_file(version_file_path, version)
-    return version
 
 
 def _read_version_file(version_file):
