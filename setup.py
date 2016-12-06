@@ -13,15 +13,15 @@ tests_require = []
 
 setup(name='vcver',
       version='0.0.4',
-      description='a tool to provide versions with version control data.',
+      description='provide package versions with version control data.',
       long_description=open(README_PATH).read(),
       author='Yusuke Tsutsumi',
       author_email='yusuke@tsutsumi.io',
-      url='',
+      url='https://github.com/toumorokoshi/vcver-python',
       packages=find_packages(),
       install_requires=install_requires,
       classifiers=[
-          'Development Status :: 3 - Alpha',
+          'Development Status :: 4 - Beta',
           'Operating System :: MacOS',
           'Operating System :: POSIX :: Linux',
           'Topic :: System :: Software Distribution',

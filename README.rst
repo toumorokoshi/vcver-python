@@ -211,6 +211,8 @@ due to the plus in the version string.
 If you need backwards compatibility and you would still like vc versioning, the
 following format is recommended:
 
+.. code-block::
+
       {main_version}.dev{commit_count}.{branch}.{scm_change_id}
 
  This can be changed by an argument into vcver:
@@ -232,6 +234,6 @@ versions are tagged according the semver spec.
 Special Thanks
 --------------
 
-- `Zillow <http://www.zillow.com/jobs/>`_, where this approach of SCM-based versioning started
+- `Zillow <http://www.zillow.com/jobs/>`_, where this particular approach of SCM-based versioning was developed
 - `Taylor McKay <https://github.com/tmckay>`_,  who implemented the original Python version at Zillow
 - `Mohammad Sarhan <https://github.com/sarhanm>`_, who designed and implemented the original Java version at Zillow, and has a public `gradle variant <https://github.com/sarhanm/gradle-versioner>`_
