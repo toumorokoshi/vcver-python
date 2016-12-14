@@ -10,6 +10,7 @@ def test(build):
     main(build)
     build.packages.install("pytest")
     build.packages.install("pytest-cov")
+    build.packages.install("mock")
     pytest = os.path.join(build.root, "bin", "py.test")
     subprocess.call([
         pytest, "--cov", "vcver",

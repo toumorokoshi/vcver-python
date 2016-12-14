@@ -38,9 +38,15 @@ class Git(SCM):
 
     def _branch(self):
         branch = self._cmd(CMD_BRANCH)
-        if branch == self._cmd(CMD_SHORT_HASH):
+        if branch != self._cmd(CMD_SHORT_HASH):
             # you may not be on a branch
-            return None
+            return branch
+        # if branch is still head, we were unsuccessful
+        # in retrieving a branch
+        # we then try other methods
+        if branch == "HEAD" and "GIT_BRANCH" in os.environ:
+            return os.environ["GIT_BRANCH"]
+
         return branch
 
     def _num_commits_since(self, tag):
