@@ -30,7 +30,7 @@ class Git(SCM):
     def get_properties(self):
         tag, tag_version = self.get_latest_version_tag()
         return {
-            "scm_change_id": self._cmd(CMD_SHORT_HASH),
+            "scm_change_id": "x" + self._cmd(CMD_SHORT_HASH),
             "commit_count": self._num_commits_since(tag),
             "tag_version": tag_version,
             "branch": self._branch()

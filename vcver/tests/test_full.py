@@ -12,7 +12,9 @@ def test_happy_case():
     version, scm = v.split("+")
     major, minor, patch, dev = version.split(".")
     branch, change_id = scm.split(".")
-    # scm_change_id should be a git hash.
+    assert change_id.startswith("x")
+    change_id = change_id[1:]
+    # scm_change_id should be a git hash
     assert set(change_id) & set("abcdef1234567890") == set(change_id)
     # major / minor should be an int
     int(major)
