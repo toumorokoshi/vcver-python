@@ -38,9 +38,15 @@ class Git(SCM):
 
     def _branch(self):
         branch = self._cmd(CMD_BRANCH)
-        if branch == self._cmd(CMD_SHORT_HASH):
-            # you may not be on a branch
-            return None
+        
+        if branch != "HEAD" and branch != self._cmd(CMD_SHORT_HASH):
+            pass
+        elif "GIT_BRANCH" in os.environ:
+            branch = os.environ["GIT_BRANCH"]
+
+        if branch.startswith("origin/"):
+            branch = branch[len("origin/"):]
+
         return branch
 
     def _num_commits_since(self, tag):
