@@ -1,4 +1,6 @@
 import vcver
+import os
+from vcver.version import _get_scm
 
 
 def test_happy_case():
@@ -23,3 +25,9 @@ def test_happy_case():
     assert dev.startswith("dev")
     # commitcount should be an int
     int(dev[3:])
+
+
+def test_child_directory_detected_as_git_repo():
+    """
+    """
+    assert _get_scm(None, os.path.join(os.curdir, "vcver")) is not None

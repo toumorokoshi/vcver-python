@@ -24,8 +24,12 @@ class Git(SCM):
 
     @staticmethod
     def is_repo(path):
-        dot_git_path = os.path.join(path, ".git")
-        return os.path.exists(dot_git_path)
+        while path != os.sep:
+            dot_git_path = os.path.join(path, ".git")
+            if os.path.exists(dot_git_path):
+                return True
+            path = os.path.split(path)[0]
+        return False
 
     def get_properties(self):
         tag, tag_version = self.get_latest_version_tag()
@@ -38,7 +42,7 @@ class Git(SCM):
 
     def _branch(self):
         branch = self._cmd(CMD_BRANCH)
-        
+
         if branch != "HEAD" and branch != self._cmd(CMD_SHORT_HASH):
             pass
         elif "GIT_BRANCH" in os.environ:
