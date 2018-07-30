@@ -26,7 +26,7 @@ class Git(SCM):
     def is_repo(path):
         """
         Detects if path is inside a valid Git repo.
-        
+
         Parameters:
         path: Path
 
@@ -38,8 +38,8 @@ class Git(SCM):
             dot_git_path = os.path.join(head, tail, ".git")
             if os.path.exists(dot_git_path):
                 return True
-            path = head 
-            head, tail = os.path.split(os.path.abspath(path)) 
+            path = head
+            head, tail = os.path.split(path)
         return False
 
     def get_properties(self):
