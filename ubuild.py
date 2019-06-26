@@ -1,35 +1,9 @@
+from uranium import current_build
 import os
-import subprocess
 
+current_build.packages.install("uranium-plus[vscode]==1.9.1")
+import uranium_plus
 
-def main(build):
-    build.packages.install(".", develop=True)
+current_build.config.update({"uranium-plus": {"module": "vcver"}})
 
-
-def test(build):
-    main(build)
-    build.packages.install("pytest")
-    build.packages.install("pytest-cov")
-    pytest = os.path.join(build.root, "bin", "py.test")
-    return subprocess.call([
-        pytest, "--cov", "vcver",
-        "vcver/tests",
-        "--cov-report", "term-missing"
-    ] + build.options.args)
-
-
-def publish(build):
-    """ distribute the uranium package """
-    build.packages.install("wheel")
-    build.executables.run([
-        "python", "setup.py",
-        "sdist", "bdist_wheel", "--universal", "upload"
-    ])
-
-
-def build_docs(build):
-    build.packages.install("sphinx")
-    build.packages.install("sphinx_rtd_theme")
-    return subprocess.call(
-        ["make", "html"], cwd=os.path.join(build.root, "docs")
-    )
+uranium_plus.bootstrap(current_build)

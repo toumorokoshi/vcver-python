@@ -16,7 +16,7 @@ def test_happy_case():
 
     try:
         # major / minor should be an int
-        major, version_remainder  = _get_leading_version_part(version)
+        major, version_remainder = _get_leading_version_part(version)
         int(major)
         minor, version_remainder = _get_leading_version_part(version_remainder[0])
         int(minor)
@@ -39,8 +39,8 @@ def test_happy_case():
 
 @pytest.mark.skip
 def _get_leading_version_part(version):
-    version_parts = version.split('.', 1)
-    return version_parts[0], version_parts[1:] 
+    version_parts = version.split(".", 1)
+    return version_parts[0], version_parts[1:]
 
 
 def test_child_directory_detected_as_git_repo():

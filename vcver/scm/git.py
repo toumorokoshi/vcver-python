@@ -48,7 +48,7 @@ class Git(SCM):
             "scm_change_id": "x" + self._cmd(CMD_SHORT_HASH),
             "commit_count": self._num_commits_since(tag),
             "tag_version": tag_version,
-            "branch": self._branch()
+            "branch": self._branch(),
         }
 
     def _branch(self):
@@ -60,7 +60,7 @@ class Git(SCM):
             branch = os.environ["GIT_BRANCH"]
 
         if branch.startswith("origin/"):
-            branch = branch[len("origin/"):]
+            branch = branch[len("origin/") :]
 
         return branch
 
@@ -87,10 +87,11 @@ class Git(SCM):
         Returns the output of the command.
         """
         proc = subprocess.Popen(
-            cmd, stdout=subprocess.PIPE,
+            cmd,
+            stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             shell=True,
-            cwd=self._path
+            cwd=self._path,
         )
         stdout, stderr = proc.communicate()
         stdout = stdout.decode("utf-8").strip()
@@ -101,7 +102,5 @@ class Git(SCM):
         if proc.returncode == 0:
             return stdout
         raise GitCommandError(
-            "'{0}' returned an error code {1}".format(
-                cmd, proc.returncode
-            )
+            "'{0}' returned an error code {1}".format(cmd, proc.returncode)
         )
