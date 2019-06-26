@@ -5,14 +5,10 @@ class SCM(object):
     """
     SCMs are wrappers around a particular form of version control.
     """
+
     RELEASE_BRANCH_REGEX = None
 
-    REQUIRED_PARAMS = [
-        "tag_version",
-        "commit_count",
-        "scm_change_id",
-        "branch"
-    ]
+    REQUIRED_PARAMS = ["tag_version", "commit_count", "scm_change_id", "branch"]
 
     def __init__(self, path):
         self._path = path
