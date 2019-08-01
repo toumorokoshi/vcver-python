@@ -6,7 +6,7 @@ from ..exception import VersionerError
 
 CMD_LATEST_VERSION_TAG = "git describe --tags --match 'v*' --abbrev=0"
 CMD_BRANCH = "git rev-parse --abbrev-ref HEAD"
-CMD_FIRST_COMMIT = "git rev-list HEAD | tail -n 1"
+CMD_REV_LIST = "git rev-list HEAD --reverse"
 CMD_LIST_TAGS = "git tag --list"
 CMD_REV_COUNT = "git rev-list {start}..{end} --count"
 CMD_SHORT_HASH = "git rev-parse --short HEAD"
@@ -68,6 +68,10 @@ class Git(SCM):
         cmd = CMD_REV_COUNT.format(start=tag, end="HEAD")
         return self._cmd(cmd)
 
+    def _get_first_commit(self):
+        all_revistions = self._cmd(CMD_REV_LIST)
+        return all_revistions.partition("\n")[0]
+
     def get_latest_version_tag(self):
         try:
             tag = self._cmd(CMD_LATEST_VERSION_TAG)
@@ -75,7 +79,7 @@ class Git(SCM):
         except GitCommandError:
             LOG.info("unable to find a valid version tag. using the default.")
             tag = "v" + DEFAULT_TAG_VERSION
-            commit = self._cmd(CMD_FIRST_COMMIT)
+            commit = self._get_first_commit()
         extracted_version = extract_tag_version(tag)
         return (commit, extracted_version)
 
