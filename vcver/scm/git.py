@@ -6,7 +6,7 @@ from ..exception import VersionerError
 
 CMD_LATEST_VERSION_TAG = "git describe --tags --match 'v*' --abbrev=0"
 CMD_BRANCH = "git rev-parse --abbrev-ref HEAD"
-CMD_SHOW_REFS = 'git branch --points-at=HEAD --format="%(refname)"'
+CMD_SHOW_BRANCHES = "git branch --points-at=HEAD"
 CMD_REV_LIST = "git rev-list HEAD --reverse"
 CMD_LIST_TAGS = "git tag --list"
 CMD_REV_COUNT = "git rev-list {start}..{end} --count"
@@ -53,13 +53,14 @@ class Git(SCM):
         }
 
     def _branch(self):
-        refs = self._cmd(CMD_SHOW_REFS).split("\n")
+        branch_line = self._cmd(CMD_SHOW_BRANCHES).split("\n")
         branch_candidate = None
-        for ref in refs:
-            if "detached" in ref:
+        for line in branch_line:
+            # strip leading *
+            line = line[len("* ") :]
+            if "detached" in line:
                 continue
-            if ref.startswith("refs/heads/"):
-                return ref[len("refs/heads/") :]
+            return line
 
         if branch_candidate is None and "GIT_BRANCH" in os.environ:
             return os.environ["GIT_BRANCH"]
@@ -71,8 +72,8 @@ class Git(SCM):
         return self._cmd(cmd)
 
     def _get_first_commit(self):
-        all_revistions = self._cmd(CMD_REV_LIST)
-        return all_revistions.partition("\n")[0]
+        all_revisions = self._cmd(CMD_REV_LIST)
+        return all_revisions.partition("\n")[0]
 
     def get_latest_version_tag(self):
         try:
