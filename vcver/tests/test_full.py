@@ -15,17 +15,28 @@ def test_happy_case():
     version, scm = v.split("+")
 
     try:
-        # major / minor should be an int
-        major, version_remainder = _get_leading_version_part(version)
-        int(major)
-        minor, version_remainder = _get_leading_version_part(version_remainder[0])
-        int(minor)
-        patch, version_remainder = _get_leading_version_part(version_remainder[0])
-        int(patch)
-        dev, version_remainder = _get_leading_version_part(version_remainder[0])
-        # commitcount should be an int
-        int(dev[3:])
-        assert dev.startswith("dev")
+        if "master" in scm:
+            # major / minor should be an int
+            major, version_remainder = _get_leading_version_part(version)
+            int(major)
+            minor, version_remainder = _get_leading_version_part(
+                version_remainder[0]
+            )
+            int(minor)
+            patch, version_remainder = _get_leading_version_part(
+                version_remainder[0]
+            )
+            int(patch)
+            dev, version_remainder = _get_leading_version_part(
+                version_remainder[0]
+            )
+            # commitcount should be an int
+            int(dev[3:])
+            assert dev.startswith("dev")
+        else:
+            should_be_zero, dev_commit_count = version.split(".")
+            assert should_be_zero == "0"
+            assert dev_commit_count.startswith("dev")
     except Exception as ex:
         msg = "{0} Generated  Version: {1}".format(ex, version)
         raise Exception(msg)

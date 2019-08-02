@@ -6,6 +6,7 @@ from ..exception import VersionerError
 
 CMD_LATEST_VERSION_TAG = "git describe --tags --match 'v*' --abbrev=0"
 CMD_BRANCH = "git rev-parse --abbrev-ref HEAD"
+CMD_SHOW_REFS = 'git branch --points-at=HEAD --format="%(refname)"'
 CMD_FIRST_COMMIT = "git rev-list HEAD | tail -n 1"
 CMD_LIST_TAGS = "git tag --list"
 CMD_REV_COUNT = "git rev-list {start}..{end} --count"
@@ -52,17 +53,18 @@ class Git(SCM):
         }
 
     def _branch(self):
-        branch = self._cmd(CMD_BRANCH)
+        refs = self._cmd(CMD_SHOW_REFS).split("\n")
+        branch_candidate = None
+        for ref in refs:
+            if "detached" in ref:
+                continue
+            if ref.startswith("refs/heads/"):
+                return ref[len("refs/heads/") :]
 
-        if branch != "HEAD" and branch != self._cmd(CMD_SHORT_HASH):
-            pass
-        elif "GIT_BRANCH" in os.environ:
-            branch = os.environ["GIT_BRANCH"]
+        if branch_candidate is None and "GIT_BRANCH" in os.environ:
+            return os.environ["GIT_BRANCH"]
 
-        if branch.startswith("origin/"):
-            branch = branch[len("origin/") :]
-
-        return branch
+        return branch_candidate
 
     def _num_commits_since(self, tag):
         cmd = CMD_REV_COUNT.format(start=tag, end="HEAD")

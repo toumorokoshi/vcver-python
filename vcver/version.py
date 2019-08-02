@@ -37,7 +37,9 @@ def get_version(
         if scm_type is None:
             msg = "unable to detect scm type."
         else:
-            msg = "scm type {0} not found, or is not a valid repo.".format(scm_type)
+            msg = "scm type {0} not found, or is not a valid repo.".format(
+                scm_type
+            )
         raise VersionerError(msg)
 
     version = determine_version(
@@ -79,7 +81,9 @@ def determine_version(
         return str(parse(fmt_to_use.format(**props)))
     except KeyError as ke:
         raise VersionerError(
-            "key {0} was not provided by the scm type {1}".format(ke, scm.get_name())
+            "key {0} was not provided by the scm type {1}".format(
+                ke, scm.get_name()
+            )
         )
 
 
