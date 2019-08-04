@@ -12,7 +12,7 @@ tests_require = []
 
 setup(
     name="vcver",
-    version="0.2.1",
+    version="0.2.10",
     description="provide package versions with version control data.",
     long_description=open(README_PATH).read(),
     author="Yusuke Tsutsumi",

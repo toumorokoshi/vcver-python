@@ -41,7 +41,7 @@ def test_happy_case():
         msg = "{0} Generated  Version: {1}".format(ex, version)
         raise Exception(msg)
 
-    branch, change_id = scm.split(".")
+    _, change_id = scm.split(".")
     assert change_id.startswith("x")
     change_id = change_id[1:]
     # scm_change_id should be a git hash

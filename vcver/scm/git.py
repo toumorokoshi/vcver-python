@@ -6,11 +6,15 @@ from ..exception import VersionerError
 
 CMD_LATEST_VERSION_TAG = "git describe --tags --match 'v*' --abbrev=0"
 CMD_BRANCH = "git rev-parse --abbrev-ref HEAD"
-CMD_SHOW_BRANCHES = "git branch --points-at=HEAD"
 CMD_REV_LIST = "git rev-list HEAD --reverse"
 CMD_LIST_TAGS = "git tag --list"
 CMD_REV_COUNT = "git rev-list {start}..{end} --count"
 CMD_SHORT_HASH = "git rev-parse --short HEAD"
+
+ENVIRONMENT_VARIABLES_SPECIFYING_BRANCH = [
+    "GIT_BRANCH",  # Jenkins CI specifies this.
+    "CI_COMMIT_REF_NAME",  # Gitlab specifies this variable
+]
 
 LOG = logging.getLogger(__name__)
 
@@ -53,19 +57,22 @@ class Git(SCM):
         }
 
     def _branch(self):
-        branch_line = self._cmd(CMD_SHOW_BRANCHES).split("\n")
-        branch_candidate = None
-        for line in branch_line:
-            # strip leading *
-            line = line[len("* ") :]
-            if "detached" in line:
-                continue
-            return line
+        # several CI systems run builds on detached heads and
+        # provide an alternate mechanism for specifying branch
+        # this ensures that those variables are considered.
+        branch = None
+        for envvar_name in ENVIRONMENT_VARIABLES_SPECIFYING_BRANCH:
+            if envvar_name in os.environ:
+                branch = os.environ[envvar_name]
 
-        if branch_candidate is None and "GIT_BRANCH" in os.environ:
-            return os.environ["GIT_BRANCH"]
+        if not branch:
+            branch = self._cmd(CMD_BRANCH)
 
-        return branch_candidate
+        # handle references to remotes. jenkins does this.
+        if "/" in branch:
+            branch = branch.split("/")[-1]
+
+        return branch
 
     def _num_commits_since(self, tag):
         cmd = CMD_REV_COUNT.format(start=tag, end="HEAD")
