@@ -46,6 +46,7 @@ def get_version(
         scm,
         version_format=version_format,
         release_version_format=release_version_format,
+        release_branch_regex=release_branch_regex,
         is_release=is_release,
     )
 
